@@ -65,6 +65,18 @@ func TestByAlpha3(t *testing.T) {
 	})
 }
 
+func BenchmarkAlpha2(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		Alpha2()
+	}
+}
+
+func BenchmarkAlpha3(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		Alpha3()
+	}
+}
+
 func BenchmarkByAlpha2(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		ByAlpha2("GB")

@@ -33,5 +33,8 @@ func main() {
 		fmt.Println(fr.Name)    // "France"
 		fmt.Println(fr.Locales) // [fr-FR frp br co ca eu oc]
 	}
+
+	fmt.Println(country.Alpha2()) // [AW AF AO ...]
+	fmt.Println(country.Alpha3()) // [ABW AFG AGO ...]
 }
 ```
