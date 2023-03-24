@@ -28,9 +28,10 @@ func main() {
 	}
 
 	if fr, ok := country.ByAlpha3("FRA"); ok {
-		fmt.Println(fr.Alpha2) // "FR"
-		fmt.Println(fr.Alpha3) // "FRA"
-		fmt.Println(fr.Name) // "France"
+		fmt.Println(fr.Alpha2)  // "FR"
+		fmt.Println(fr.Alpha3)  // "FRA"
+		fmt.Println(fr.Name)    // "France"
+		fmt.Println(fr.Locales) // [fr-FR frp br co ca eu oc]
 	}
 }
 ```
