@@ -66,8 +66,8 @@ func BenchmarkByAlpha2(b *testing.B) {
 
 func BenchmarkByAlpha3(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		ByAlpha2("GBR")
-		ByAlpha2("DEU")
-		ByAlpha2("USA")
+		ByAlpha3("GBR")
+		ByAlpha3("DEU")
+		ByAlpha3("USA")
 	}
 }
