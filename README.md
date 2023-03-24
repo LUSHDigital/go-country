@@ -21,9 +21,10 @@ import (
 
 func main() {
 	if gb, ok := country.ByAlpha2("GB"); ok {
-		fmt.Println(gb.Alpha2) // "GB"
-		fmt.Println(gb.Alpha3) // "GBR"
-		fmt.Println(gb.Name) // "United Kingdom"
+		fmt.Println(gb.Alpha2)  // "GB"
+		fmt.Println(gb.Alpha3)  // "GBR"
+		fmt.Println(gb.Name)    // "United Kingdom"
+		fmt.Println(gb.Locales) // [en-GB cy-GB gd]
 	}
 
 	if fr, ok := country.ByAlpha3("FRA"); ok {

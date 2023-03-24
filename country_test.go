@@ -1,6 +1,7 @@
 package country
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -18,6 +19,10 @@ func TestByAlpha2(t *testing.T) {
 
 		if c.Alpha3 != "GBR" {
 			t.Errorf("c.Alpha3 = %v, want %v", c.Alpha3, "GBR")
+		}
+
+		if !reflect.DeepEqual(c.Locales, []string{"en-GB", "cy-GB", "gd"}) {
+			t.Errorf("c.Locales = %q, want %q", c.Locales, []string{"en-GB", "cy-GB", "gd"})
 		}
 	})
 
@@ -44,6 +49,10 @@ func TestByAlpha3(t *testing.T) {
 
 		if c.Alpha3 != "GBR" {
 			t.Errorf("c.Alpha3 = %v, want %v", c.Alpha3, "GBR")
+		}
+
+		if !reflect.DeepEqual(c.Locales, []string{"en-GB", "cy-GB", "gd"}) {
+			t.Errorf("c.Locales = %q, want %q", c.Locales, []string{"en-GB", "cy-GB", "gd"})
 		}
 	})
 

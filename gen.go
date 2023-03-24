@@ -3,12 +3,14 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"go/format"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/LUSHDigital/go-country"
 )
@@ -20,12 +22,7 @@ type Country struct {
 }
 
 func main() {
-	f, err := os.Open("./data/iso_3166-1.json")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	countries, err := readCountries(f)
+	countries, err := readCountries()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -39,10 +36,12 @@ func main() {
 				Name: "%s",
 				Alpha2: "%s",
 				Alpha3: "%s",
+				Locales: %#v,
 			},`,
 			v.Name,
 			v.Alpha2,
 			v.Alpha3,
+			v.Locales,
 		)
 
 		fmt.Fprintf(&alpha2Buf, `
@@ -79,6 +78,9 @@ func main() {
 				return nil, false
 			}
 
+			// Prevent mutation of original slice.
+			ret.Locales = append([]string(nil), ret.Locales...)
+
 			return &ret, true
 		}
 
@@ -92,6 +94,9 @@ func main() {
 			default:
 				return nil, false
 			}
+
+			// Prevent mutation of original slice.
+			ret.Locales = append([]string(nil), ret.Locales...)
 
 			return &ret, true
 		}`,
@@ -111,22 +116,55 @@ func main() {
 	}
 }
 
-func readCountries(f *os.File) ([]country.Country, error) {
-	defer f.Close()
+func readCountries() ([]country.Country, error) {
+	iso3166, err := os.Open("./data/iso_3166-1.json")
+	if err != nil {
+		return nil, err
+	}
+	defer iso3166.Close()
 
 	data := make(map[string][]Country)
 
-	if err := json.NewDecoder(f).Decode(&data); err != nil {
+	if err := json.NewDecoder(iso3166).Decode(&data); err != nil {
 		return nil, fmt.Errorf("json decode: %v", err)
+	}
+
+	countryInfo, err := os.Open("./data/countryInfo.txt")
+	if err != nil {
+		return nil, err
+	}
+	defer countryInfo.Close()
+
+	alpha3Tolocales := make(map[string]string)
+
+	scanner := bufio.NewScanner(countryInfo)
+	for scanner.Scan() {
+		row := strings.Split(scanner.Text(), "\t")
+
+		locales := row[len(row)-4]
+		if locales == "" {
+			continue
+		}
+
+		alpha3Tolocales[row[1]] = locales
+	}
+	if err := scanner.Err(); err != nil {
+		return nil, err
 	}
 
 	countries := make([]country.Country, 0, len(data["3166-1"]))
 
 	for _, v := range data["3166-1"] {
+		var locs []string
+		if l, ok := alpha3Tolocales[v.Alpha3]; ok {
+			locs = strings.Split(l, ",")
+		}
+
 		countries = append(countries, country.Country{
-			Name:   v.Name,
-			Alpha2: v.Alpha2,
-			Alpha3: v.Alpha3,
+			Name:    v.Name,
+			Alpha2:  v.Alpha2,
+			Alpha3:  v.Alpha3,
+			Locales: locs,
 		})
 	}
 
